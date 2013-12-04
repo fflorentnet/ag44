@@ -8,11 +8,44 @@ using namespace std;
 Graph::Graph()
 {
 }
+Graph::~Graph()
+{
+    dist.clear();
+    listPoint.clear();
+    listRoute.clear();
+    next.clear();
+}
+
 void Graph::addPoint(int num, std::string name, Point *p)
 {
     listPoint[num]=p;
     std::cout << "Point " << num << " ajouté [" << p->getNom() <<"] (" << p->get_Altitude() << "m)" <<endl;
 }
+void Graph::getRoutes()
+{
+    Route* p;
+    std::map<std::pair<Point*, Point*>, Route*>::const_iterator it;
+    for (it = listRoute.begin(); it != listRoute.end(); it++)
+    {
+
+        p = (*it).second;
+        if (p != NULL)
+            p->toCout();
+    }
+}
+void Graph::getPoints()
+{
+    Point* p;
+    int num;
+    std::map<int, Point*>::const_iterator it;
+    for (it = listPoint.begin(); it != listPoint.end(); it++)
+    {
+        p = (*it).second;
+        num = (*it).first;
+        std::cout << "Point " << (num) << " [" << p->getNom() <<"] (" << p->get_Altitude() << "m)" <<endl;
+    }
+}
+
 void Graph::addRoute(Route* r)
 {
     listRoute[std::make_pair(r->getStarting(),r->getArrival())]=r;
@@ -45,20 +78,28 @@ void Graph::FWarshall()
     std::map<int, Point*>::const_iterator itTempp;
     std::map<int, Point*>::const_iterator itTp;
 
-
-    std::map<std::pair<Point*, Point*>, float>::const_iterator itDist;
-
     Point* i;
     Point* j;
     Point* k;
 
+    Route* r;
+    float rTemp=0;
     for(itTemp = listPoint.begin(); itTemp != listPoint.end(); itTemp++)
     {
         i = (*itTemp).second;
         for(itTempp = listPoint.begin(); itTempp != listPoint.end(); itTempp++)
         {
             j = (*itTempp).second;
-            dist[std::make_pair(i,j)] = i->getValue(j);
+            r = listRoute[std::make_pair(i,j)];
+            if (!r)
+            {
+                rTemp = std::numeric_limits<float>::infinity();
+               listRoute.erase(std::make_pair(i,j));
+            }
+            else
+                rTemp = r->getValue();
+
+            dist[std::make_pair(i,j)] = rTemp;
             next[std::make_pair(i,j)] = NULL;
         }
     }
@@ -145,24 +186,30 @@ std::stack<Route*> Graph::Dijkstra(Point *source, Point *dest)
                 }
             }
         }
+
         marquage[marque]=true;
         for (itr=listRoute.begin();itr != listRoute.end();itr++)
         {
             Route* rTemp = (*itr).second;
-            if (rTemp->getStarting() == marque)
+            if (rTemp != 0)
             {
-                Point* voisin = rTemp->getArrival();
-                float valeurRoute = rTemp->getValue();
-                if (valeurRoute != 0)
+                if (rTemp->getStarting() == marque)
                 {
-                    if (label[voisin]>label[marque]+valeurRoute)
+
+                    Point* voisin = rTemp->getArrival();
+                    float valeurRoute = rTemp->getValue();
+                    if (valeurRoute != 0)
                     {
-                        label[voisin]=std::min(label[voisin],label[marque]+valeurRoute);
-                        chemin[voisin] = marque;
+                        if (label[voisin]>label[marque]+valeurRoute)
+                        {
+                            label[voisin]=std::min(label[voisin],label[marque]+valeurRoute);
+                            chemin[voisin] = marque;
+                        }
                     }
                 }
             }
         }
+
     }while(!verifierMarquage(marquage));
     std::stack<Route*> cheminSort;
     Point* sortie = dest;
@@ -180,6 +227,78 @@ Route* Graph::getRoute(Point* p1, Point* p2)
 {
     Route* temp = listRoute[std::make_pair(p1,p2)];
     return temp;
+
+}
+void Graph::DFS(Point* s, std::string typeRoute)
+{
+    Route* r;
+    bool b=false;
+    std::set<Route*>::const_iterator it;
+    std::cout << "Lancement DFS:" <<endl;
+    dfsRoute.clear();
+    dfsPoint.clear();
+    subDFS(s, typeRoute);
+    for (it = dfsRoute.begin(); it != dfsRoute.end(); it++)
+    {
+        r = *it;
+        r->toCout();
+        b = true;
+    }
+    if (!b)
+        std::cout << "Il n'y a pas de point accessible avec le type " << typeRoute << " à partir de " << s->getNom() <<endl;
+    std::cout << endl;
+}
+
+void Graph::subDFS(Point* s, std::string typeRoute)
+{
+    std::map<std::pair<Point*, Point*>, Route*>::const_iterator it;
+    std::pair<Point*, Point*> pairPoints;
+    Point* voisin;
+    Route* route;
+    dfsPoint.insert(s);
+    std::string type = "";
+    for (it = listRoute.begin(); it != listRoute.end();it++)
+    {
+        pairPoints = (*it).first;
+        route = (*it).second;
+        if (pairPoints.first == s && route != NULL)
+        {
+            voisin = pairPoints.second;
+            type = route->getType();
+            if (!dfsPoint.count(voisin) && comparaisonRoute(typeRoute,route->getType())) // le tas ne possède pas déjà le voisin
+            {
+                dfsRoute.insert(route);
+                subDFS(voisin, typeRoute);
+            }
+        }
+    }
+}
+bool Graph::comparaisonRoute(std::string typeCherche, std::string typeDonne)
+{
+    bool b = false;
+    if (typeCherche == typeDonne)
+        b =  true;
+    else
+    {
+        if (typeCherche != "B" && typeCherche != "V" && typeCherche != "R" && typeCherche != "N")
+        {
+            b =  false;
+        }
+        else
+        {
+            if (typeCherche == "V")
+                b =  false;
+            else if (typeCherche == "B" && typeDonne != "V")
+                b =  false;
+            else if (typeCherche == "R" && (typeDonne != "B" && typeCherche != "V"))
+                     b =  false;
+            else if ((typeCherche == "N" && (typeDonne != "R" & typeDonne != "B" && typeCherche != "V")))
+                b =  false;
+            else
+                b =  true;
+        }
+    }
+    return b;
 
 }
 

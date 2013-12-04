@@ -4,15 +4,21 @@
 #include <string>
 #include <point.h>
 #include <stack>
+#include <set>
 #include "route.h"
 class Graph
 {
 private:
+    std::set<Point*> dfsPoint;
+    std::set<Route*> dfsRoute;
+
     std::map<int, Point*> listPoint;
     std::map<std::pair<Point*,Point*> , Route*> listRoute;
 
     std::map<std::pair<Point*,Point*>, Point*> next;
     std::map<std::pair<Point*,Point*>, float> dist;
+
+    bool comparaisonRoute(std::string typeCherche, std::string typeDonne);
 
 public:
     std::stack<Route*> pileRoute;
@@ -26,7 +32,13 @@ public:
     void FWarshall();
     std::string getPath(Point* i, Point* j);
     bool verifierMarquage(std::map<Point*, bool> marquage);
+
+    void DFS(Point* s, std::string typeRoute);
+    void subDFS(Point* s, std::string typeRoute);
     ~Graph();
+
+    void getPoints();
+    void getRoutes();
 };
 
 #endif // GRAPH_H

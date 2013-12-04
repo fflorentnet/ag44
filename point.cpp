@@ -16,7 +16,7 @@ void Point::addVoisin(Point* p, float value)
 }
 float Point::getValue(Point* p)
 {
-    float temp = std::numeric_limits<float>::max();
+    float temp = std::numeric_limits<float>::infinity();
     if (voisins[p])
         temp = voisins[p];
     if (nom == p->getNom())

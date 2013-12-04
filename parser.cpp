@@ -85,7 +85,7 @@ Parser::Parser(std::string fileName)
             end=split(temp,'\t',5);
 
             r = new Route(name, type, g->getPoint(atoi(start.c_str())), g->getPoint(atoi(end.c_str())));
-            g->getPoint(atoi(start.c_str()))->addVoisin(g->getPoint(atoi(end.c_str())), r->getValue());
+            //g->getPoint(atoi(start.c_str()))->addVoisin(g->getPoint(atoi(end.c_str())), r->getValue());
             g->addRoute(r);
         }
 
