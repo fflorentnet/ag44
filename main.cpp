@@ -90,7 +90,7 @@ void dijkstra(Graph* g)
 }
 void dfs(Graph* g)
 {
-
+    g->getPoints();
     std::cout << "Entrez le sommet de départ et le type de route:" << endl;
     std::string point1 = "villaroger";
     std::cout << "Depart: \t";
@@ -124,6 +124,7 @@ void dfs(Graph* g)
 
 void menu(Graph* g)
 {
+    bool b=true;
     std::string menu = "";
     do
     {
@@ -134,7 +135,8 @@ void menu(Graph* g)
         std::cout << "3 - Floyd-Warshal [deux noeuds]" << endl;
         std::cout << "4 - Dijkstra [deux noeuds]" << endl;
         std::cout << "5 - Noeuds accessibles à partir d'un noeud source et un type de piste"<< endl;
-        std::cout << "6 - Quitter le programme" << endl;
+        std::cout << "6 - Charger un autre graphe" << endl;
+        std::cout << "7 - Quitter le programme" << endl;
         std::cin >> menu;
 
         std::cout << endl << endl << endl;
@@ -145,27 +147,27 @@ void menu(Graph* g)
         case 3: fwarshall(g); break;
         case 4: dijkstra(g); break;
         case 5: dfs(g); break;
-        case 6: delete g;
+        case 6: delete g; b=false; break;
+        case 7: delete g;
             exit(EXIT_SUCCESS); break;
         default: break;
         }
-    }while(true);
+    }while(b);
 }
 
 int main()
 {
-    Graph* g;
-    Parser p("dataski.txt");
-    g = p.getGraph();
-
-    //std::cout << "FWarshall:" << endl;
-    g->FWarshall();
-    /*   do
+    do
     {
-
-    }
-    }while(true);*/
-    menu(g);
+        std::string filename = "dataski.txt";
+        Graph* g;
+        std::cout << "Entrez un nom de fichier [dataski.txt] :" << endl;
+        std::cin >> filename;
+        Parser p(filename);
+        g = p.getGraph();
+        g->FWarshall();
+        menu(g);
+    }while(true);
     return 0;
 }
 
