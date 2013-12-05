@@ -81,14 +81,23 @@ void dfs(Graph* g)
     std::string type = "33";
     std::cout << "Type de route: \t";
     std::cin >> type;
-
+    std::cout << "Quel type de comparaison voulez-vous utiliser ?" <<endl;
+    std::cout << "1. typeCherche == typeDonne ?" << endl;
+    std::cout << "2. typeCherche > typeDonne ?" << endl;
+    std::string test = "1";
+    std::cin >> test;
+    bool testDFS = true;
+    if (atoi(test.c_str()) == 1)
+        testDFS = false;
+    else
+        testDFS = true;
     Point* src = g->getPoint(point1);
     std::cout << "Source:" << point1 << endl;
     std::cout << "Type:" << type << endl;
 
     if (src != NULL && type != "")
     {
-        g->DFS(src,type);
+        g->DFS(src,type, testDFS);
     }
 }
 
@@ -116,7 +125,6 @@ void menu(Graph* g)
         case 4: dijkstra(g); break;
         case 5: dfs(g); break;
         case 6: delete g;
-            std::cin >> menu;
             exit(EXIT_SUCCESS); break;
         default: break;
         }

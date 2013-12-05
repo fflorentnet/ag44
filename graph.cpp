@@ -94,7 +94,7 @@ void Graph::FWarshall()
             if (!r)
             {
                 rTemp = std::numeric_limits<float>::infinity();
-               listRoute.erase(std::make_pair(i,j));
+                listRoute.erase(std::make_pair(i,j));
             }
             else
                 rTemp = r->getValue();
@@ -229,7 +229,8 @@ Route* Graph::getRoute(Point* p1, Point* p2)
     return temp;
 
 }
-void Graph::DFS(Point* s, std::string typeRoute)
+void Graph::DFS(Point* s, std::string typeRoute, bool test)
+//test=true si recherche comparative
 {
     Route* r;
     bool b=false;
@@ -237,7 +238,7 @@ void Graph::DFS(Point* s, std::string typeRoute)
     std::cout << "Lancement DFS:" <<endl;
     dfsRoute.clear();
     dfsPoint.clear();
-    subDFS(s, typeRoute);
+    subDFS(s, typeRoute, test);
     for (it = dfsRoute.begin(); it != dfsRoute.end(); it++)
     {
         r = *it;
@@ -249,7 +250,7 @@ void Graph::DFS(Point* s, std::string typeRoute)
     std::cout << endl;
 }
 
-void Graph::subDFS(Point* s, std::string typeRoute)
+void Graph::subDFS(Point* s, std::string typeRoute, bool test)
 {
     std::map<std::pair<Point*, Point*>, Route*>::const_iterator it;
     std::pair<Point*, Point*> pairPoints;
@@ -265,10 +266,21 @@ void Graph::subDFS(Point* s, std::string typeRoute)
         {
             voisin = pairPoints.second;
             type = route->getType();
-            if (!dfsPoint.count(voisin) && comparaisonRoute(typeRoute,route->getType())) // le tas ne possède pas déjà le voisin
+            if (test)
             {
-                dfsRoute.insert(route);
-                subDFS(voisin, typeRoute);
+                if (!dfsPoint.count(voisin) && comparaisonRoute(typeRoute,route->getType())) // le tas ne possède pas déjà le voisin
+                {
+                    dfsRoute.insert(route);
+                    subDFS(voisin, typeRoute, test);
+                }
+            }
+            else
+            {
+                if (!dfsPoint.count(voisin) && typeRoute == route->getType()) // le tas ne possède pas déjà le voisin
+                {
+                    dfsRoute.insert(route);
+                    subDFS(voisin, typeRoute, test);
+                }
             }
         }
     }
@@ -285,13 +297,13 @@ bool Graph::comparaisonRoute(std::string typeCherche, std::string typeDonne)
             b =  false;
         }
         else
-        {
+        {// N > R > B > V
             if (typeCherche == "V")
                 b =  false;
             else if (typeCherche == "B" && typeDonne != "V")
                 b =  false;
             else if (typeCherche == "R" && (typeDonne != "B" && typeCherche != "V"))
-                     b =  false;
+                b =  false;
             else if ((typeCherche == "N" && (typeDonne != "R" & typeDonne != "B" && typeCherche != "V")))
                 b =  false;
             else

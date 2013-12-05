@@ -33,8 +33,8 @@ public:
     std::string getPath(Point* i, Point* j);
     bool verifierMarquage(std::map<Point*, bool> marquage);
 
-    void DFS(Point* s, std::string typeRoute);
-    void subDFS(Point* s, std::string typeRoute);
+    void DFS(Point* s, std::string typeRoute, bool test);
+    void subDFS(Point* s, std::string typeRoute, bool test);
     ~Graph();
 
     void getPoints();
