@@ -230,21 +230,19 @@ Route* Graph::getRoute(Point* p1, Point* p2)
 
 }
 void Graph::DFS(Point* s, std::string typeRoute, bool test)
-//test=true si recherche comparative
 {
     Route* r;
     bool b=false;
     std::set<Route*>::const_iterator it;
     std::cout << "Lancement DFS:" <<endl;
-    dfsRoute.clear();
     dfsPoint.clear();
     subDFS(s, typeRoute, test);
-    for (it = dfsRoute.begin(); it != dfsRoute.end(); it++)
-    {
-        r = *it;
+    do{
+        r = dfsRoute.front();
+        dfsRoute.pop();
         r->toCout();
         b = true;
-    }
+    }while(!dfsRoute.empty());
     if (!b)
         std::cout << "Il n'y a pas de point accessible avec le type " << typeRoute << " à partir de " << s->getNom() <<endl;
     std::cout << endl;
@@ -270,7 +268,7 @@ void Graph::subDFS(Point* s, std::string typeRoute, bool test)
             {
                 if (!dfsPoint.count(voisin) && comparaisonRoute(typeRoute,route->getType())) // le tas ne possède pas déjà le voisin
                 {
-                    dfsRoute.insert(route);
+                    dfsRoute.push(route);
                     subDFS(voisin, typeRoute, test);
                 }
             }
@@ -278,7 +276,7 @@ void Graph::subDFS(Point* s, std::string typeRoute, bool test)
             {
                 if (!dfsPoint.count(voisin) && typeRoute == route->getType()) // le tas ne possède pas déjà le voisin
                 {
-                    dfsRoute.insert(route);
+                    dfsRoute.push(route);
                     subDFS(voisin, typeRoute, test);
                 }
             }

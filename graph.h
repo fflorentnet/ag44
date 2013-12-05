@@ -4,13 +4,14 @@
 #include <string>
 #include <point.h>
 #include <stack>
+#include <queue>
 #include <set>
 #include "route.h"
 class Graph
 {
 private:
     std::set<Point*> dfsPoint;
-    std::set<Route*> dfsRoute;
+    std::queue<Route*> dfsRoute;
 
     std::map<int, Point*> listPoint;
     std::map<std::pair<Point*,Point*> , Route*> listRoute;

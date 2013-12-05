@@ -39,6 +39,14 @@ void fwarshall(Graph* g)
             g->pileRoute.pop();
         }while(!g->pileRoute.empty());
     }
+    if (src == NULL)
+    {
+        std::cout << "Le point " << point1 << " n'existe pas." << endl;
+    }
+    if (dst == NULL)
+    {
+        std::cout << "Le point " << point2 << " n'existe pas." << endl;
+    }
 }
 void dijkstra(Graph* g)
 {
@@ -70,6 +78,15 @@ void dijkstra(Graph* g)
         }
         std::cout << "Temps total: " << total << "min" << endl;
     }
+    if (src == NULL)
+    {
+        std::cout << "Le point " << point1 << " n'existe pas." << endl;
+    }
+    if (dst == NULL)
+    {
+        std::cout << "Le point " << point2 << " n'existe pas." << endl;
+    }
+
 }
 void dfs(Graph* g)
 {
@@ -82,8 +99,8 @@ void dfs(Graph* g)
     std::cout << "Type de route: \t";
     std::cin >> type;
     std::cout << "Quel type de comparaison voulez-vous utiliser ?" <<endl;
-    std::cout << "1. typeCherche == typeDonne ?" << endl;
-    std::cout << "2. typeCherche > typeDonne ?" << endl;
+    std::cout << "1. typeCherche == typeRoute ?" << endl;
+    std::cout << "2. typeCherche >= typeRoute ? (N > R > B > V)" << endl;
     std::string test = "1";
     std::cin >> test;
     bool testDFS = true;
@@ -98,6 +115,10 @@ void dfs(Graph* g)
     if (src != NULL && type != "")
     {
         g->DFS(src,type, testDFS);
+    }
+    if (src == NULL)
+    {
+        std::cout << "Le point " << point1 << " n'existe pas." << endl;
     }
 }
 

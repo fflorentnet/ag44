@@ -37,7 +37,7 @@ Route::Route(std::string n, std::string t, Point* s, Point* a): name(n), startin
     {
         //arc2000 -> arc1600
         if (s->getNom() == "arc2000" && a->getNom()=="arc1600")
-            value = 40;
+            value=40;
         //arc1600 -> arc2000
         if (s->getNom() == "arc1600" && a->getNom()=="arc2000")
             value=40;
